@@ -21,7 +21,7 @@ const collegeSchema = new mongoose.Schema(
             type : Boolean,
             default : false
         },
-        interns : {type : []}
+       //interns : {type : []}
     },{timeStamp : true}
 );
 

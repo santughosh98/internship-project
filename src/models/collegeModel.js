@@ -20,7 +20,8 @@ const collegeSchema = new mongoose.Schema(
         isDeleted : {
             type : Boolean,
             default : false
-        }
+        },
+        interns : {type : []}
     },{timeStamp : true}
 );
 

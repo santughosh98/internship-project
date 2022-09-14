@@ -7,8 +7,7 @@ const createIntern = async function (req, res) {
         if (!validator.isValidBody(data)) {
             return res.status(400).send({ status: false, message: "Please provide intern details" })
         }
-        const { name, email, mobile} = data;
-        const collegeId = data.collegeId
+        const { name, email, mobile, collegeId } = data;
         if (!validator.isValidFullName(name)) {
             return res.status(400).send({ status: false, message: "Name is required and name should be a string of aplhabets" })
         }

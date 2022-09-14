@@ -52,4 +52,9 @@ const isValidObjectId = function(id){
     return mongoose.isValidObjectId(id)
 }
 
-module.exports = {isValidShortName , isValidLink , isValidBody , isValidFullName , isValidEmail , isValidMobile , isValidObjectId}
+const isValidObject = function(object){
+    if(typeof object === "object" && object !== null && object !== undefined) return true;
+    return false;
+}
+
+module.exports = {isValidShortName , isValidLink , isValidBody , isValidFullName , isValidEmail , isValidMobile , isValidObjectId, isValidObject}

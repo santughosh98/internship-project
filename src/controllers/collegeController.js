@@ -11,7 +11,10 @@ const createCollege = async function (req, res) {
         if (!validator.isValidBody(data)) {
             return res.status(400).send({ status: false, message: "Please provide college details" })
         }
+        
+        //destructuring
         const { name, fullName, logoLink } = data;
+
         //validation starts
         if (!validator.isValidShortName(name)) {
             return res.status(400).send({ message: "name should be a string , all alphabets should be in lower case " })
@@ -23,13 +26,19 @@ const createCollege = async function (req, res) {
             return res.status(400).send({ status: false, message: "Please provide a valid logo link" })
         }
         //validation ends
+
         //checking for duplicacy
         let filter = await collegeModel.findOne({ name: name })
         if (filter) {
             return res.status(400).send({ message: "College with this name already exists" })
         }
+        
+        //creating document
         let created = await collegeModel.create(data);
-        res.status(201).send({ status: true,message : "College details successfully created " ,  data: created })
+
+        //filtering and sending response
+        let filteredData  = await collegeModel.findOne(created).select({_id:0 , __v:0})
+        res.status(201).send({ status: true, message: "College details successfully added ", data: filteredData })
     } catch (error) {
         return res.status(500).send({ message: error.message })
     }
@@ -52,22 +61,22 @@ const getCollegeDetails = async function (req, res) {
         if (!validator.isValidObject(collegeDetails)) {
             return res.status(404).send({ message: "No college found" })
         }
-        
+
         let newId = collegeDetails._id
-       
+
         collegeFilter["name"] = collegeDetails.name;
         collegeFilter["fullName"] = collegeDetails.fullName;
         collegeFilter["logoLink"] = collegeDetails.logoLink;
-        let findInterns = await internModel.find({collegeId : newId }).select({ _id: 1, name: 1, email: 1, mobile: 1 })
-       
-        if(!validator.isValidArray(findInterns)){
-            return res.status(404).send({status : false ,message : "No intern found"})
+        let findInterns = await internModel.find({ collegeId: newId }).select({ _id: 1, name: 1, email: 1, mobile: 1 })
+
+        if (!validator.isValidArray(findInterns)) {
+            return res.status(404).send({ status: false, message: "No intern found" })
         }
 
         collegeFilter["interns"] = findInterns;
-        res.status(200).send({status : true,data : collegeFilter})
-   
-    }catch(error){
+        res.status(200).send({ status: true,message : "Showing college details along with the interns applied for internship at the college ", data: collegeFilter })
+
+    } catch (error) {
         return res.status(500).send({ message: error.message })
     }
 }

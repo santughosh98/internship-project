@@ -10,7 +10,10 @@ const createIntern = async function (req, res) {
         if (!validator.isValidBody(data)) {
             return res.status(400).send({ status: false, message: "Please provide intern details" })
         }
+
+        //destructuring
         const { name, email, mobile, collegeName } = data;
+
         //validation starts
         if (!validator.isValidFullName(name)) {
             return res.status(400).send({ status: false, message: "Name is required and name should be a string of aplhabets" })
@@ -36,11 +39,17 @@ const createIntern = async function (req, res) {
             return res.status(400).send({ message: "Intern with the mobile number already exists" })
         }
         //duplicacy check ends
+
         let filterCollege = await collegeModel.findOne({name : collegeName})
         let id = filterCollege._id;
         data["collegeId"] = id;
+
+        //creating document
         let created = await internModel.create(data)
-        res.status(201).send({ status: true , message : "Intern details successfully created" , data: created })
+
+        //fitering and sending response
+        let filteredData = await internModel.findOne(created).select({_id:0 , createdAt : 0 ,updatedAt : 0 , __v : 0})
+        res.status(201).send({ status: true , message : "Intern details successfully added" , data: filteredData })
     }catch(error){
         return res.status(500).send({msg : error.message})
     }

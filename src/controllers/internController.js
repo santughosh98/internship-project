@@ -2,6 +2,8 @@ const collegeModel = require("../models/collegeModel");
 const internModel = require("../models/internModel")
 const validator = require("../validators/validator")
 
+//========================~~~~~~~~~~~~~~~~~~~(createIntern)~~~~~~~~~~~~~~~~~~~~~=========================
+
 const createIntern = async function (req, res) {
     try {
         let data = req.body;
@@ -9,6 +11,7 @@ const createIntern = async function (req, res) {
             return res.status(400).send({ status: false, message: "Please provide intern details" })
         }
         const { name, email, mobile, collegeName } = data;
+        //validation starts
         if (!validator.isValidFullName(name)) {
             return res.status(400).send({ status: false, message: "Name is required and name should be a string of aplhabets" })
         }
@@ -21,6 +24,9 @@ const createIntern = async function (req, res) {
         if(!validator.isValidShortName(collegeName)){
             return res.status(400).send({ status: false, message: "Please enter a valid collegeName" })
         }
+        //validation ends
+
+        //duplicacy check
         let filterEmail = await internModel.findOne({ email: email })
         if (filterEmail) {
             return res.status(400).send({ message: "Intern with the email already exists " })
@@ -29,11 +35,12 @@ const createIntern = async function (req, res) {
         if (filterMobile) {
             return res.status(400).send({ message: "Intern with the mobile number already exists" })
         }
+        //duplicacy check ends
         let filterCollege = await collegeModel.findOne({name : collegeName})
         let id = filterCollege._id;
         data["collegeId"] = id;
         let created = await internModel.create(data)
-        res.status(201).send({ status: true, data: created })
+        res.status(201).send({ status: true , message : "Intern details successfully created" , data: created })
     }catch(error){
         return res.status(500).send({msg : error.message})
     }

@@ -17,10 +17,10 @@ const createCollege = async function (req, res) {
 
         //validation starts
         if (!validator.isValidShortName(name)) {
-            return res.status(400).send({ message: "name should be a string , all alphabets should be in lower case " })
+            return res.status(400).send({ message: "name is required , should be a string , all alphabets should be in lower case " })
         }
         if (!validator.isValidFullName(fullName)) {
-            return res.status(400).send({ status: false, message: "Fullname should be a string of aplhabets" })
+            return res.status(400).send({ status: false, message: "Fullname is required and should be a string of aplhabets" })
         }
         if (!validator.isValidLink(logoLink)) {
             return res.status(400).send({ status: false, message: "Please provide a valid logo link" })
@@ -30,7 +30,7 @@ const createCollege = async function (req, res) {
         //checking for duplicacy
         let filter = await collegeModel.findOne({ name: name })
         if (filter) {
-            return res.status(400).send({ message: "College with this name already exists" })
+            return res.status(409).send({ message: "College with this name already exists" })
         }
         
         //creating document
@@ -51,13 +51,13 @@ const getCollegeDetails = async function (req, res) {
         let query = req.query;
         let collegeFilter = {};
         if (!validator.isValidBody(query)) {
-            return res.status(400).send({ status: false, message: "PLease provide a query params" })
+            return res.status(400).send({ status: false, message: "PLease provide query params" })
         }
         let collegeName = req.query.collegeName;
         if (!validator.isValidShortName(collegeName)) {
             return res.status(400).send({ status: false, message: "Collegename is required and name should be a string , all alphabets should be in lower case " })
         }
-        let collegeDetails = await collegeModel.findOne({ name: collegeName })
+        let collegeDetails = await collegeModel.findOne({ name: collegeName  , isDeleted : false})
         if (!validator.isValidObject(collegeDetails)) {
             return res.status(404).send({ message: "No college found" })
         }
@@ -67,7 +67,7 @@ const getCollegeDetails = async function (req, res) {
         collegeFilter["name"] = collegeDetails.name;
         collegeFilter["fullName"] = collegeDetails.fullName;
         collegeFilter["logoLink"] = collegeDetails.logoLink;
-        let findInterns = await internModel.find({ collegeId: newId }).select({ _id: 1, name: 1, email: 1, mobile: 1 })
+        let findInterns = await internModel.find({ collegeId: newId , isDeleted : false}).select({ _id: 1, name: 1, email: 1, mobile: 1 })
 
         if (!validator.isValidArray(findInterns)) {
             return res.status(404).send({ status: false, message: "No intern found" })

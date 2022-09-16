@@ -13,7 +13,7 @@ const isValidShortName = function (value) {
 const isValidLink = function (value) {
     if (typeof value === "string" &&
         value.trim().length > 0 &&
-        /(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&=]*)/.test(value)
+        /^https?:\/\/.*\.[s3].*\.(png|gif|webp|jpeg|jpg)\??.*$/gim.test(value)
     )
         return true;
     return false;

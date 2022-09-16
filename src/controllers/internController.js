@@ -41,6 +41,9 @@ const createIntern = async function (req, res) {
         //duplicacy check ends
 
         let filterCollege = await collegeModel.findOne({name : collegeName})
+        if(!filterCollege){
+            return res.status(400).send({status : false, message : "College with such name doesn't exist"})
+        }
         let id = filterCollege._id;
         data["collegeId"] = id;
 
